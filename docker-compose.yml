@@ -1,0 +1,20 @@
+version: '3'
+services:
+    web:
+        build:
+            # 어떤 폴더의 이미지를 끌어다가 쓸 것인지
+            context: .
+            dockerfile: Dockerfile.dev
+        ports:
+            - "300:3000"
+        volumes:
+            - /app/node_modules
+            - .:/app
+    tests:
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
+        volumes:
+            - /app/node_modules
+            - .:/app
+        command: ["npm", "run", "test"]
