@@ -1,20 +1,48 @@
 version: '3'
 services:
-    web:
+    postgres:
+        image: 'postgres:latest'
+    redis:
+        image: 'redis:latest'
+    nginx:
+        restart: always
         build:
-            # 어떤 폴더의 이미지를 끌어다가 쓸 것인지
-            context: .
             dockerfile: Dockerfile.dev
+            context: ./nginx
         ports:
-            - "300:3000"
-        volumes:
-            - /app/node_modules
-            - .:/app
-    tests:
+            - '3050:80'
+    api:
         build:
-            context: .
             dockerfile: Dockerfile.dev
+            # Dockerfile을 포함하여 이 context 안에 들어있는 파일을 build에 이용하라 
+            context: ./server
+        volumes:
+            # 연결시키지 않을 디렉토리
+            - /app/node_modules
+            # 연결시킬 디렉토리
+            - ./server:/app
+        environment:
+            # 이 정보는 docker hub에서 찾을 수 있음.
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
+            - PGUSER=postgres
+            - PGHOST=postgres
+            - PGDATABASE=postgres
+            - PGPASSWORD=postgres_password
+            - PGPORT=5432
+    client:
+        stdin_open: true
+        build:
+            dockerfile: Dockerfile.dev
+            context: ./client
         volumes:
             - /app/node_modules
-            - .:/app
-        command: ["npm", "run", "test"]
+            - ./client:/app
+    worker:
+        build:
+            dockerfile: Dockerfile.dev
+            context: ./worker
+        volumes:
+            - /app/node_modules
+            - ./worker:/app
+        
