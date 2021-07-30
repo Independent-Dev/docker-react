@@ -18,3 +18,15 @@ after_success:
   - docker push juju08217/multi-nginx
   - docker push juju08217/multi-server
   - docker push juju08217/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-1"
+  app: "Docker-react"
+  env: "Dockerreact-env"
+  bucket_name: "elasticbeanstalk-us-east-1-504977403857"
+  bucket_path: "Docker-react"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
