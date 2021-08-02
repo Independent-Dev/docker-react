@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: database-persistent-volume-claim
+spec:
+  # 격리성과 관련된 옵션
+  # 이 옵션은 하나만 읽고 쓸 수 있다는 것. 이것 이외에 ReadOnlyMany, ReadWriteMany와 같은 옵션 존재
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  # 이것 이외에 storageClassName을 지정할 수 있음
